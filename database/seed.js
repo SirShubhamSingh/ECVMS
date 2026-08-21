@@ -30,8 +30,8 @@ const nehaId = ObjectId(); // second Compliance Officer, used to prove officer-s
 db.Users.insertMany([
   {
     _id: asmitaId,
-    Name: "Asmita Baghsavar",
-    Email: "asmita@ecmvs.local",
+    Name: "Ajay Baghsavar",
+    Email: "ajay@ecmvs.local",
     PasswordHash: PASSWORD_HASH,
     Role: "Super Administrator",
     Department: "Enterprise Risk",
@@ -144,7 +144,7 @@ db.VendorIssues.insertMany([
     Priority: "Critical",
     Status: "Risk Assessment",
     AssignedOfficerId: rahulId, AssignedOfficerName: "Rahul Sharma",
-    CreatedById: asmitaId, CreatedByName: "Asmita Baghsavar",
+    CreatedById: asmitaId, CreatedByName: "Ajay Baghsavar",
     CreatedDate: new Date("2026-06-28T08:45:00Z"),
     DueDate: new Date("2026-08-10T00:00:00Z"),
     Description: "BluePeak has not submitted a renewed data processing agreement required under the vendor compliance policy.",
@@ -204,7 +204,7 @@ db.VendorIssues.insertMany([
     Priority: "Medium",
     Status: "Closed",
     AssignedOfficerId: rahulId, AssignedOfficerName: "Rahul Sharma",
-    CreatedById: asmitaId, CreatedByName: "Asmita Baghsavar",
+    CreatedById: asmitaId, CreatedByName: "Ajay Baghsavar",
     CreatedDate: new Date("2026-05-20T10:00:00Z"),
     DueDate: new Date("2026-06-15T00:00:00Z"),
     Description: "Vendor's published privacy notice referenced a regulation version superseded in Q1.",
@@ -470,12 +470,12 @@ db.Notifications.insertMany([
 // Audit Logs (20 representative entries)
 // ---------------------------------------------------------------------
 const auditEntries = [
-  { UserId: asmitaId, UserName: "Asmita Baghsavar", Action: "Login", Entity: "User", EntityId: asmitaId.toString(), Timestamp: new Date("2026-07-20T08:00:00Z"), Details: "Asmita Baghsavar logged in." },
+  { UserId: asmitaId, UserName: "Ajay Baghsavar", Action: "Login", Entity: "User", EntityId: asmitaId.toString(), Timestamp: new Date("2026-07-20T08:00:00Z"), Details: "Ajay Baghsavar logged in." },
   { UserId: priyaId, UserName: "Priya Mehta", Action: "Issue created", Entity: "VendorIssue", EntityId: issue12.toString(), Timestamp: new Date("2026-07-02T10:15:00Z"), Details: "Created issue VI-2026-0012: Delayed service delivery" },
   { UserId: priyaId, UserName: "Priya Mehta", Action: "Issue assigned", Entity: "VendorIssue", EntityId: issue12.toString(), Timestamp: new Date("2026-07-02T10:20:00Z"), Details: "Assigned VI-2026-0012 to Rahul Sharma" },
   { UserId: rahulId, UserName: "Rahul Sharma", Action: "Investigation started", Entity: "Investigation", EntityId: inv12.toString(), Timestamp: new Date("2026-07-03T09:00:00Z"), Details: "Investigation opened for VI-2026-0012, assigned to Rahul Sharma" },
   { UserId: priyaId, UserName: "Priya Mehta", Action: "Issue created", Entity: "VendorIssue", EntityId: issue11.toString(), Timestamp: new Date("2026-07-05T11:30:00Z"), Details: "Created issue VI-2026-0011: Invoice mismatch" },
-  { UserId: asmitaId, UserName: "Asmita Baghsavar", Action: "Issue created", Entity: "VendorIssue", EntityId: issue10.toString(), Timestamp: new Date("2026-06-28T08:45:00Z"), Details: "Created issue VI-2026-0010: Compliance document missing" },
+  { UserId: asmitaId, UserName: "Ajay Baghsavar", Action: "Issue created", Entity: "VendorIssue", EntityId: issue10.toString(), Timestamp: new Date("2026-06-28T08:45:00Z"), Details: "Created issue VI-2026-0010: Compliance document missing" },
   { UserId: rahulId, UserName: "Rahul Sharma", Action: "Investigation started", Entity: "Investigation", EntityId: inv10.toString(), Timestamp: new Date("2026-06-29T09:00:00Z"), Details: "Investigation opened for VI-2026-0010, assigned to Rahul Sharma" },
   { UserId: rahulId, UserName: "Rahul Sharma", Action: "Investigation completed", Entity: "Investigation", EntityId: inv10.toString(), Timestamp: new Date("2026-07-14T16:00:00Z"), Details: "Investigation for VI-2026-0010 completed by Rahul Sharma" },
   { UserId: rahulId, UserName: "Rahul Sharma", Action: "Risk assessment created", Entity: "RiskAssessment", EntityId: issue10.toString(), Timestamp: new Date("2026-07-15T10:00:00Z"), Details: "Risk assessed for VI-2026-0010: score 20 (Critical)" },
@@ -489,7 +489,7 @@ const auditEntries = [
   { UserId: nehaId, UserName: "Neha Kulkarni", Action: "Case resolved", Entity: "VendorIssue", EntityId: issue09.toString(), Timestamp: new Date("2026-06-28T10:00:00Z"), Details: "VI-2026-0009 marked as resolved" },
   { UserId: rahulId, UserName: "Rahul Sharma", Action: "Resolution created", Entity: "Resolution", EntityId: issue04.toString(), Timestamp: new Date("2026-07-01T10:00:00Z"), Details: "Draft resolution created for VI-2026-0004" },
   { UserId: rahulId, UserName: "Rahul Sharma", Action: "Approval submitted", Entity: "Resolution", EntityId: issue04.toString(), Timestamp: new Date("2026-07-08T09:00:00Z"), Details: "Resolution for VI-2026-0004 submitted, status: Pending Approval" },
-  { UserId: asmitaId, UserName: "Asmita Baghsavar", Action: "User created", Entity: "User", EntityId: nehaId.toString(), Timestamp: new Date("2025-01-12T09:00:00Z"), Details: "Created user Neha Kulkarni (Compliance Officer)" }
+  { UserId: asmitaId, UserName: "Ajay Baghsavar", Action: "User created", Entity: "User", EntityId: nehaId.toString(), Timestamp: new Date("2025-01-12T09:00:00Z"), Details: "Created user Neha Kulkarni (Compliance Officer)" }
 ];
 db.AuditLogs.insertMany(auditEntries);
 
