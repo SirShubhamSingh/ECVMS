@@ -6,6 +6,7 @@
 // (Stored as its SHA-256 hex digest — see backend/Helpers/PasswordHasher.cs)
 
 const PASSWORD_HASH = "a109e36947ad56de1dca1cc49f0ef8ac9ad9a7b1aa0df41fb3c4cb73c1ff01ea"; // Password123!
+const ADMIN_PASSWORD_HASH = "3da4cf508d01faae9391df25c1908a42ee89d618bd586280037d174bd7113896"; // Shubham@ECMVS2026!
 
 db = db.getSiblingDB("ECMVS");
 
@@ -16,11 +17,12 @@ db.RiskAssessments.deleteMany({});
 db.Resolutions.deleteMany({});
 db.Notifications.deleteMany({});
 db.AuditLogs.deleteMany({});
+db.ComplianceCases.deleteMany({});
 
 // ---------------------------------------------------------------------
 // Users
 // ---------------------------------------------------------------------
-const asmitaId = ObjectId();
+const shubhamId = ObjectId();
 const rahulId = ObjectId();
 const priyaId = ObjectId();
 const amitId = ObjectId();
@@ -29,10 +31,10 @@ const nehaId = ObjectId(); // second Compliance Officer, used to prove officer-s
 
 db.Users.insertMany([
   {
-    _id: asmitaId,
-    Name: "Ajay Baghsavar",
-    Email: "ajay@ecmvs.local",
-    PasswordHash: PASSWORD_HASH,
+    _id: shubhamId,
+    Name: "Shubham Singh",
+    Email: "shubham@ecmvs.local",
+    PasswordHash: ADMIN_PASSWORD_HASH,
     Role: "Super Administrator",
     Department: "Enterprise Risk",
     Active: true,
@@ -144,7 +146,7 @@ db.VendorIssues.insertMany([
     Priority: "Critical",
     Status: "Risk Assessment",
     AssignedOfficerId: rahulId, AssignedOfficerName: "Rahul Sharma",
-    CreatedById: asmitaId, CreatedByName: "Ajay Baghsavar",
+    CreatedById: shubhamId, CreatedByName: "Shubham Singh",
     CreatedDate: new Date("2026-06-28T08:45:00Z"),
     DueDate: new Date("2026-08-10T00:00:00Z"),
     Description: "BluePeak has not submitted a renewed data processing agreement required under the vendor compliance policy.",
@@ -204,7 +206,7 @@ db.VendorIssues.insertMany([
     Priority: "Medium",
     Status: "Closed",
     AssignedOfficerId: rahulId, AssignedOfficerName: "Rahul Sharma",
-    CreatedById: asmitaId, CreatedByName: "Ajay Baghsavar",
+    CreatedById: shubhamId, CreatedByName: "Shubham Singh",
     CreatedDate: new Date("2026-05-20T10:00:00Z"),
     DueDate: new Date("2026-06-15T00:00:00Z"),
     Description: "Vendor's published privacy notice referenced a regulation version superseded in Q1.",
@@ -463,19 +465,19 @@ db.Notifications.insertMany([
   { UserId: amitId, Title: "Approval required", Message: "Resolution for VI-2026-0004 is awaiting your approval.", Read: false, CreatedDate: new Date("2026-07-08T09:00:00Z"), RelatedEntity: "Resolution", RelatedEntityId: issue04.toString() },
   { UserId: amitId, Title: "Approval required", Message: "Resolution for VI-2026-0009 was awaiting your approval.", Read: true, CreatedDate: new Date("2026-06-27T09:00:00Z"), RelatedEntity: "Resolution", RelatedEntityId: issue09.toString() },
   { UserId: employeeId, Title: "Case resolved", Message: "Vendor issue VI-2026-0009 you reported has been resolved.", Read: false, CreatedDate: new Date("2026-06-28T10:10:00Z"), RelatedEntity: "VendorIssue", RelatedEntityId: issue09.toString() },
-  { UserId: asmitaId, Title: "High risk assessment recorded", Message: "VI-2026-0010 was assessed as Critical risk.", Read: false, CreatedDate: new Date("2026-07-15T10:05:00Z"), RelatedEntity: "RiskAssessment", RelatedEntityId: issue10.toString() }
+  { UserId: shubhamId, Title: "High risk assessment recorded", Message: "VI-2026-0010 was assessed as Critical risk.", Read: false, CreatedDate: new Date("2026-07-15T10:05:00Z"), RelatedEntity: "RiskAssessment", RelatedEntityId: issue10.toString() }
 ]);
 
 // ---------------------------------------------------------------------
 // Audit Logs (20 representative entries)
 // ---------------------------------------------------------------------
 const auditEntries = [
-  { UserId: asmitaId, UserName: "Ajay Baghsavar", Action: "Login", Entity: "User", EntityId: asmitaId.toString(), Timestamp: new Date("2026-07-20T08:00:00Z"), Details: "Ajay Baghsavar logged in." },
+  { UserId: shubhamId, UserName: "Shubham Singh", Action: "Login", Entity: "User", EntityId: shubhamId.toString(), Timestamp: new Date("2026-07-20T08:00:00Z"), Details: "Shubham Singh logged in." },
   { UserId: priyaId, UserName: "Priya Mehta", Action: "Issue created", Entity: "VendorIssue", EntityId: issue12.toString(), Timestamp: new Date("2026-07-02T10:15:00Z"), Details: "Created issue VI-2026-0012: Delayed service delivery" },
   { UserId: priyaId, UserName: "Priya Mehta", Action: "Issue assigned", Entity: "VendorIssue", EntityId: issue12.toString(), Timestamp: new Date("2026-07-02T10:20:00Z"), Details: "Assigned VI-2026-0012 to Rahul Sharma" },
   { UserId: rahulId, UserName: "Rahul Sharma", Action: "Investigation started", Entity: "Investigation", EntityId: inv12.toString(), Timestamp: new Date("2026-07-03T09:00:00Z"), Details: "Investigation opened for VI-2026-0012, assigned to Rahul Sharma" },
   { UserId: priyaId, UserName: "Priya Mehta", Action: "Issue created", Entity: "VendorIssue", EntityId: issue11.toString(), Timestamp: new Date("2026-07-05T11:30:00Z"), Details: "Created issue VI-2026-0011: Invoice mismatch" },
-  { UserId: asmitaId, UserName: "Ajay Baghsavar", Action: "Issue created", Entity: "VendorIssue", EntityId: issue10.toString(), Timestamp: new Date("2026-06-28T08:45:00Z"), Details: "Created issue VI-2026-0010: Compliance document missing" },
+  { UserId: shubhamId, UserName: "Shubham Singh", Action: "Issue created", Entity: "VendorIssue", EntityId: issue10.toString(), Timestamp: new Date("2026-06-28T08:45:00Z"), Details: "Created issue VI-2026-0010: Compliance document missing" },
   { UserId: rahulId, UserName: "Rahul Sharma", Action: "Investigation started", Entity: "Investigation", EntityId: inv10.toString(), Timestamp: new Date("2026-06-29T09:00:00Z"), Details: "Investigation opened for VI-2026-0010, assigned to Rahul Sharma" },
   { UserId: rahulId, UserName: "Rahul Sharma", Action: "Investigation completed", Entity: "Investigation", EntityId: inv10.toString(), Timestamp: new Date("2026-07-14T16:00:00Z"), Details: "Investigation for VI-2026-0010 completed by Rahul Sharma" },
   { UserId: rahulId, UserName: "Rahul Sharma", Action: "Risk assessment created", Entity: "RiskAssessment", EntityId: issue10.toString(), Timestamp: new Date("2026-07-15T10:00:00Z"), Details: "Risk assessed for VI-2026-0010: score 20 (Critical)" },
@@ -489,9 +491,21 @@ const auditEntries = [
   { UserId: nehaId, UserName: "Neha Kulkarni", Action: "Case resolved", Entity: "VendorIssue", EntityId: issue09.toString(), Timestamp: new Date("2026-06-28T10:00:00Z"), Details: "VI-2026-0009 marked as resolved" },
   { UserId: rahulId, UserName: "Rahul Sharma", Action: "Resolution created", Entity: "Resolution", EntityId: issue04.toString(), Timestamp: new Date("2026-07-01T10:00:00Z"), Details: "Draft resolution created for VI-2026-0004" },
   { UserId: rahulId, UserName: "Rahul Sharma", Action: "Approval submitted", Entity: "Resolution", EntityId: issue04.toString(), Timestamp: new Date("2026-07-08T09:00:00Z"), Details: "Resolution for VI-2026-0004 submitted, status: Pending Approval" },
-  { UserId: asmitaId, UserName: "Ajay Baghsavar", Action: "User created", Entity: "User", EntityId: nehaId.toString(), Timestamp: new Date("2025-01-12T09:00:00Z"), Details: "Created user Neha Kulkarni (Compliance Officer)" }
+  { UserId: shubhamId, UserName: "Shubham Singh", Action: "User created", Entity: "User", EntityId: nehaId.toString(), Timestamp: new Date("2025-01-12T09:00:00Z"), Details: "Created user Neha Kulkarni (Compliance Officer)" }
 ];
 db.AuditLogs.insertMany(auditEntries);
+
+// ---------------------------------------------------------------------
+// Compliance Hub cases - one representative record per domain
+// ---------------------------------------------------------------------
+db.ComplianceCases.insertMany([
+  { CaseNumber: "CC-2026-0001", CaseType: "Grievance", Title: "Workplace conduct concern", Description: "Protected employee concern submitted for confidential review.", Status: "Under Review", Severity: "High", Confidentiality: "Highly Confidential", Subject: "People Operations", AnonymousReporter: true, CreatedById: shubhamId, CreatedByName: "Shubham Singh", CreatedDate: new Date("2026-07-28T09:00:00Z"), Tags: ["speak-up", "retaliation-watch"] },
+  { CaseNumber: "CC-2026-0002", CaseType: "Fraud", Title: "Duplicate supplier payment allegation", Description: "Potential duplicate invoice pattern identified during payment analytics.", Status: "Investigation", Severity: "Critical", Confidentiality: "Highly Confidential", Subject: "Northstar Supplies", AssignedToId: rahulId, AssignedToName: "Rahul Sharma", CreatedById: shubhamId, CreatedByName: "Shubham Singh", CreatedDate: new Date("2026-07-22T09:00:00Z"), Tags: ["financial-crime", "forensic-review"] },
+  { CaseNumber: "CC-2026-0003", CaseType: "Health & Safety", Title: "Warehouse near-miss incident", Description: "Forklift near miss reported; corrective controls required before closeout.", Status: "Action Required", Severity: "High", Confidentiality: "Restricted", Subject: "Distribution Centre A", Location: "Pune", CreatedById: priyaId, CreatedByName: "Priya Mehta", CreatedDate: new Date("2026-08-02T09:00:00Z"), Tags: ["near-miss", "corrective-action"] },
+  { CaseNumber: "CC-2026-0004", CaseType: "Conflict of Interest", Title: "Annual disclosure requires review", Description: "Employee disclosed a relationship with a prospective supplier decision maker.", Status: "Under Review", Severity: "Medium", Confidentiality: "Confidential", Subject: "Procurement sourcing event", CreatedById: amitId, CreatedByName: "Amit Verma", CreatedDate: new Date("2026-07-18T09:00:00Z"), Tags: ["disclosure", "recusal"] },
+  { CaseNumber: "CC-2026-0005", CaseType: "Vendor Risk", Title: "Critical vendor due diligence overdue", Description: "Annual security and resilience review has passed its target date.", Status: "Action Required", Severity: "Critical", Confidentiality: "Restricted", Subject: "BluePeak Analytics", DueDate: new Date("2026-08-30T00:00:00Z"), AssignedToId: rahulId, AssignedToName: "Rahul Sharma", CreatedById: priyaId, CreatedByName: "Priya Mehta", CreatedDate: new Date("2026-07-11T09:00:00Z"), Tags: ["third-party", "due-diligence"] },
+  { CaseNumber: "CC-2026-0006", CaseType: "Employee", Title: "Mandatory ethics attestation pending", Description: "Employee compliance attestation remains outstanding after two reminders.", Status: "New", Severity: "Medium", Confidentiality: "Restricted", Subject: "Operations team", CreatedById: shubhamId, CreatedByName: "Shubham Singh", CreatedDate: new Date("2026-08-05T09:00:00Z"), Tags: ["attestation", "employee-compliance"] }
+]);
 
 // ---------------------------------------------------------------------
 // Indexes
@@ -506,6 +520,8 @@ db.RiskAssessments.createIndex({ IssueId: 1 });
 db.Resolutions.createIndex({ IssueId: 1 });
 db.Notifications.createIndex({ UserId: 1, Read: 1 });
 db.AuditLogs.createIndex({ Timestamp: -1 });
+db.ComplianceCases.createIndex({ CaseNumber: 1 }, { unique: true });
+db.ComplianceCases.createIndex({ CaseType: 1, Status: 1 });
 
 print("ECMVS seed complete:");
 print("  Users: " + db.Users.countDocuments());
@@ -515,4 +531,6 @@ print("  RiskAssessments: " + db.RiskAssessments.countDocuments());
 print("  Resolutions: " + db.Resolutions.countDocuments());
 print("  Notifications: " + db.Notifications.countDocuments());
 print("  AuditLogs: " + db.AuditLogs.countDocuments());
-print("Demo login password for all accounts: Password123!");
+print("  ComplianceCases: " + db.ComplianceCases.countDocuments());
+print("Super Administrator: shubham@ecmvs.local / Shubham@ECMVS2026!");
+print("Other demo accounts password: Password123!");

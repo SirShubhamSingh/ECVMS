@@ -93,6 +93,13 @@ Always queried scoped to the authenticated caller's own `UserId` — never accep
 | Action, Entity, EntityId, Details | string | |
 | Timestamp | date | |
 
+## ComplianceCases
+The Compliance Hub stores domain-aware matters in `ComplianceCases`. Supported `CaseType` values
+are `Grievance`, `Fraud`, `Health & Safety`, `Conflict of Interest`, `Vendor Risk`, and `Employee`.
+Records include `CaseNumber`, `Title`, `Description`, `Status`, `Severity`, `Confidentiality`,
+`Subject`, `Location`, `AnonymousReporter`, ownership, dates, and `Tags`. Cases are searchable by
+number, title, and subject and write to `AuditLogs` when created or updated.
+
 ## Indexes created by `seed.js`
 - `Users.Email` (unique)
 - `VendorIssues.IssueNumber` (unique)
@@ -104,5 +111,7 @@ Always queried scoped to the authenticated caller's own `UserId` — never accep
 - `Resolutions.IssueId`
 - `Notifications.UserId, Read`
 - `AuditLogs.Timestamp` (descending)
+- `ComplianceCases.CaseNumber` (unique)
+- `ComplianceCases.CaseType, Status`
 
 Contract Management is intentionally **not** modeled anywhere in this schema — it is out of scope for ECMVS.

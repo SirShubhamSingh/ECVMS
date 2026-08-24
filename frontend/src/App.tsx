@@ -17,6 +17,7 @@ import Reports from "./pages/Reports";
 import Users from "./pages/Users";
 import AuditLogPage from "./pages/AuditLogPage";
 import Settings from "./pages/Settings";
+import ComplianceHub from "./pages/ComplianceHub";
 
 export default function App() {
   return (
@@ -34,6 +35,7 @@ export default function App() {
               }
             >
               <Route path="/" element={<Dashboard />} />
+              <Route path="/compliance" element={<ComplianceHub />} />
 
               <Route path="/vendor-issues" element={<VendorIssues />} />
               <Route path="/vendor-issues/:id" element={<VendorIssueDetails />} />

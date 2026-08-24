@@ -1,7 +1,7 @@
 interface StatCardProps {
   label: string;
   value: number | string;
-  accent?: "blue" | "green" | "amber" | "red" | "purple" | "teal";
+  accent?: "blue" | "green" | "amber" | "red" | "purple" | "teal" | "orange";
   hint?: string;
 }
 

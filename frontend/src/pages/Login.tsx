@@ -7,8 +7,8 @@ import { useAuth } from "../hooks/useAuth";
 export default function Login() {
   const { currentUser, login } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("shubham@ecmvs.local");
+  const [password, setPassword] = useState("Shubham@ECMVS2026!");
   const [remember, setRemember] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);

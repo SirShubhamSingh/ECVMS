@@ -109,11 +109,12 @@ Then open **http://localhost:5173** in Chrome or Edge and log in with any demo a
 
 ## 8. Demo Accounts
 
-Password for **every** account: **`Password123!`**
+Password for the seeded demo accounts: **`Password123!`**. The administrator account uses
+**`Shubham@ECMVS2026!`**.
 
 | Role | Name | Email |
 |---|---|---|
-| Super Administrator | Asmita Baghsavar | `asmita@ecmvs.local` |
+| Super Administrator | Shubham Singh | `shubham@ecmvs.local` |
 | Compliance Officer | Rahul Sharma | `rahul@ecmvs.local` |
 | Compliance Officer | Neha Kulkarni | `neha@ecmvs.local` |
 | Vendor Manager | Priya Mehta | `priya@ecmvs.local` |
@@ -145,6 +146,13 @@ officer-scoping rule described below — each only sees investigations assigned 
 - **Audit Log** — every significant action recorded, admin-only viewer with filters
 - **Reports** — issue/investigation/risk/resolution analytics with charts and filters
 - **Responsive UI** — sidebar collapses to a mobile menu, tables scroll horizontally on small screens
+- **Compliance Hub** — a shared, audited case register and intake flow for Grievance, Fraud,
+  Health & Safety, Conflict of Interest, Vendor Risk, and Employee compliance matters. Each case
+  supports severity, confidentiality, anonymous reporting, subject/location context, ownership,
+  due dates, tags, searchable triage, and controlled status progression.
+
+The Compliance Hub is available at `/compliance` after login. It complements the existing
+Vendor Issues workflow, which remains the detailed vendor investigation and resolution workspace.
 
 ## 10. Role Permissions Summary
 
@@ -248,7 +256,7 @@ GET    /api/audit-logs                (Admin)
 - **Investigations are officer-scoped on the backend.** `GET /api/investigations` for a
   Compliance Officer returns *only* investigations where `OfficerId` matches the officer's
   own JWT-derived user id — this cannot be bypassed by search or query parameters. Try it:
-  log in as Rahul, then as Neha — each sees only their own cases. Log in as Asmita
+  log in as Rahul, then as Neha — each sees only their own cases. Log in as Shubham
   (Super Administrator) to see all of them.
 - **Notifications are always scoped to the caller's JWT identity.** `GET /api/notifications/me`
   never accepts a client-supplied user id.
@@ -270,11 +278,11 @@ Before relying on this build, verify:
 - [ ] Frontend starts (`npm run dev`) and the login page loads
 - [ ] Login works for each of the 6 demo accounts
 - [ ] Vendor issue creation, assignment, and status changes persist to MongoDB
-- [ ] Rahul sees only his own investigations; Neha sees only hers; Asmita sees all
+- [ ] Rahul sees only his own investigations; Neha sees only hers; Shubham sees all
 - [ ] Risk Assessment is only offered for Vendor Issues once eligible (post-investigation)
 - [ ] Resolution -> Submit for Approval -> Approver Approve/Reject flow works end-to-end
 - [ ] Rahul's notifications differ from Priya's -- no cross-user leakage
-- [ ] Audit Log records the actions above and is visible only to Asmita
+- [ ] Audit Log records the actions above and is visible only to Shubham
 - [ ] Reports render charts from live database data (not hardcoded arrays)
 - [ ] Logout clears the session and redirects to `/login`
 

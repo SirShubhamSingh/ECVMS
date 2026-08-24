@@ -323,7 +323,7 @@ function ChangeStatusModal({ issue, statuses, onClose, onSaved }: {
     }>
       <label>
         New Status
-        <select value={status} onChange={(e) => setStatus(e.target.value)}>
+        <select value={status} onChange={(e) => setStatus(e.target.value as VendorIssue["status"])}>
           {statuses.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
       </label>

@@ -10,6 +10,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", path: "/", icon: "📊" },
+  { label: "Compliance Hub", path: "/compliance", icon: "◈" },
   { label: "Vendor Issues", path: "/vendor-issues", icon: "🗂️" },
   {
     label: "Investigations",

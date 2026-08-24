@@ -1,0 +1,487 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [5 0 R 7 0 R 9 0 R 11 0 R 13 0 R] /Count 5 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Length 2513 >>
+stream
+BT
+/F1 10 Tf
+48 748 Td
+14 TL
+(ECMVS Project Guide) Tj
+T*
+() Tj
+T*
+(1. What ECMVS is) Tj
+T*
+() Tj
+T*
+(ECMVS means Enterprise Compliance & Vendor Management System. It helps an organization recor) Tj
+T*
+(d concerns, assign owners, investigate facts, assess risk, approve corrective actions, notif) Tj
+T*
+(y people, and keep an audit history.) Tj
+T*
+() Tj
+T*
+(The project now has two connected workspaces:) Tj
+T*
+() Tj
+T*
+(1. **Compliance Hub**: a shared intake and case register for Grievance, Fraud, Health & Safe) Tj
+T*
+(ty, Conflict of Interest, Vendor Risk, and Employee compliance.) Tj
+T*
+(2. **Vendor Issues**: detailed vendor issue investigation, risk assessment, resolution, appr) Tj
+T*
+(oval, and closure workflow.) Tj
+T*
+() Tj
+T*
+(Contract management is intentionally outside this project.) Tj
+T*
+() Tj
+T*
+(2. Main features) Tj
+T*
+() Tj
+T*
+(- Login with JWT authentication.) Tj
+T*
+(- Role-based access for Super Administrator, Compliance Officer, Vendor Manager, Approver, a) Tj
+T*
+(nd Employee.) Tj
+T*
+(- Role-specific dashboards and navigation.) Tj
+T*
+(- Compliance Hub with six case domains.) Tj
+T*
+(- Case creation with title, description, severity, confidentiality, subject, location, anony) Tj
+T*
+(mous reporter option, tags, owner, and due date.) Tj
+T*
+(- Case register search and filters for domain and status.) Tj
+T*
+(- Vendor issue creation, editing, assignment, comments, priorities, statuses, due dates, and) Tj
+T*
+( search.) Tj
+T*
+(- Investigation records with findings, root cause, evidence, notes, and officer scoping.) Tj
+T*
+(- Risk assessment using likelihood multiplied by impact.) Tj
+T*
+(- Resolution records with corrective and preventive actions.) Tj
+T*
+(- Approval workflow for resolutions.) Tj
+T*
+(- Notifications with unread tracking.) Tj
+T*
+(- Admin user management: create, edit, activate, deactivate, and delete users.) Tj
+T*
+(- Audit log for important actions.) Tj
+T*
+(- Reports with charts and operational analytics.) Tj
+T*
+(- Swagger API documentation.) Tj
+T*
+(- Responsive layout for desktop and mobile.) Tj
+T*
+(- MongoDB local development support through Docker.) Tj
+T*
+() Tj
+T*
+(3. Compliance domains) Tj
+T*
+() Tj
+T*
+(| Domain | Simple meaning | Example |) Tj
+T*
+(|---|---|---|) Tj
+T*
+(| Grievance | Employee or workplace concern | Conduct complaint or retaliation concern |) Tj
+T*
+(| Fraud | Suspected dishonest or financial activity | Duplicate supplier payment |) Tj
+T*
+(| Health & Safety | Incident, hazard, injury, or near miss | Warehouse forklift near miss |) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 4 0 R >>
+endobj
+6 0 obj
+<< /Length 2037 >>
+stream
+BT
+/F1 10 Tf
+48 748 Td
+14 TL
+(| Conflict of Interest | Disclosure of a personal or business conflict | Relationship with a) Tj
+T*
+( supplier decision maker |) Tj
+T*
+(| Vendor Risk | Third-party exposure and due diligence | Overdue vendor security review |) Tj
+T*
+(| Employee | Employee compliance and conduct matter | Missing ethics attestation |) Tj
+T*
+() Tj
+T*
+(4. Standard workflow) Tj
+T*
+() Tj
+T*
+(Compliance Hub) Tj
+T*
+() Tj
+T*
+(1. Open **Compliance Hub**.) Tj
+T*
+(2. Select **New case**.) Tj
+T*
+(3. Select the domain and severity.) Tj
+T*
+(4. Enter the facts and context.) Tj
+T*
+(5. Choose confidentiality and anonymous reporting when needed.) Tj
+T*
+(6. Create the case.) Tj
+T*
+(7. Search or filter the register.) Tj
+T*
+(8. Assign and progress the case through review, investigation, action, and closure.) Tj
+T*
+() Tj
+T*
+(Vendor issue workflow) Tj
+T*
+() Tj
+T*
+(1. Create a vendor issue.) Tj
+T*
+(2. Assign a Compliance Officer.) Tj
+T*
+(3. Investigate the issue.) Tj
+T*
+(4. Complete a risk assessment.) Tj
+T*
+(5. Create a resolution.) Tj
+T*
+(6. Submit for approval when required.) Tj
+T*
+(7. Approve or reject the resolution.) Tj
+T*
+(8. Mark the issue resolved and closed.) Tj
+T*
+(9. Review the audit log and notifications.) Tj
+T*
+() Tj
+T*
+(5. Roles) Tj
+T*
+() Tj
+T*
+(| Role | Responsibility |) Tj
+T*
+(|---|---|) Tj
+T*
+(| Super Administrator | Full administration, users, audit, and all workflows |) Tj
+T*
+(| Compliance Officer | Investigations, risk assessment, and resolutions |) Tj
+T*
+(| Vendor Manager | Vendor issues, assignment, and vendor operations |) Tj
+T*
+(| Approver | Reviews and approves or rejects resolutions |) Tj
+T*
+(| Employee | Reports concerns and views permitted information |) Tj
+T*
+() Tj
+T*
+(6. Technology) Tj
+T*
+() Tj
+T*
+(- Frontend: React 18, TypeScript, Vite, React Router, Axios, Recharts.) Tj
+T*
+(- Backend: ASP.NET Core 8 Web API and C#.) Tj
+T*
+(- Database: MongoDB with the official MongoDB.Driver package.) Tj
+T*
+(- Authentication: JWT tokens.) Tj
+T*
+(- API documentation: Swagger/OpenAPI.) Tj
+T*
+() Tj
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 6 0 R >>
+endobj
+8 0 obj
+<< /Length 1429 >>
+stream
+BT
+/F1 10 Tf
+48 748 Td
+14 TL
+(7. Project folders) Tj
+T*
+() Tj
+T*
+(- frontend/src/pages: application screens.) Tj
+T*
+(- frontend/src/components: shared UI components.) Tj
+T*
+(- frontend/src/services: API clients.) Tj
+T*
+(- backend/Controllers: HTTP endpoints.) Tj
+T*
+(- backend/Services: business logic.) Tj
+T*
+(- backend/Models: MongoDB models.) Tj
+T*
+(- backend/DTOs: request and response objects.) Tj
+T*
+(- backend/Data: MongoDB context and settings.) Tj
+T*
+(- database/seed.js: demo data and indexes.) Tj
+T*
+(- docs: project documentation.) Tj
+T*
+() Tj
+T*
+(8. Run locally) Tj
+T*
+() Tj
+T*
+(Start MongoDB) Tj
+T*
+() Tj
+T*
+(bash) Tj
+T*
+(docker run -d --name ecmvs-mongodb -p 27017:27017 mongo:7) Tj
+T*
+(docker cp database/seed.js ecmvs-mongodb:/tmp/seed.js) Tj
+T*
+(docker exec ecmvs-mongodb mongosh --quiet /tmp/seed.js) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(If the container already exists, use docker start ecmvs-mongodb.) Tj
+T*
+() Tj
+T*
+(Start the backend) Tj
+T*
+() Tj
+T*
+(bash) Tj
+T*
+(cd backend) Tj
+T*
+(dotnet restore) Tj
+T*
+(dotnet run --urls http://localhost:5128) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(API: http://localhost:5128  ) Tj
+T*
+(Swagger: http://localhost:5128/swagger) Tj
+T*
+() Tj
+T*
+(Start the frontend) Tj
+T*
+() Tj
+T*
+(bash) Tj
+T*
+(cd frontend) Tj
+T*
+(npm install) Tj
+T*
+(npm run dev) Tj
+T*
+() Tj
+T*
+() Tj
+T*
+(Application: http://localhost:5173) Tj
+T*
+() Tj
+T*
+(The frontend uses /api and Vite proxies it to the backend.) Tj
+T*
+() Tj
+ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Length 1484 >>
+stream
+BT
+/F1 10 Tf
+48 748 Td
+14 TL
+(9. Demo login) Tj
+T*
+() Tj
+T*
+(Administrator:) Tj
+T*
+() Tj
+T*
+(- Email: shubham@ecmvs.local) Tj
+T*
+(- Password: Shubham@ECMVS2026!) Tj
+T*
+() Tj
+T*
+(Other seeded demo accounts use password Password123!:) Tj
+T*
+() Tj
+T*
+(- rahul@ecmvs.local) Tj
+T*
+(- neha@ecmvs.local) Tj
+T*
+(- priya@ecmvs.local) Tj
+T*
+(- amit@ecmvs.local) Tj
+T*
+(- employee@ecmvs.local) Tj
+T*
+() Tj
+T*
+(10. Important API endpoints) Tj
+T*
+() Tj
+T*
+(- POST /api/auth/login) Tj
+T*
+(- GET /api/auth/me) Tj
+T*
+(- GET /api/compliance-cases) Tj
+T*
+(- POST /api/compliance-cases) Tj
+T*
+(- PUT /api/compliance-cases/{id}) Tj
+T*
+(- GET /api/vendor-issues) Tj
+T*
+(- POST /api/vendor-issues) Tj
+T*
+(- GET /api/investigations) Tj
+T*
+(- GET /api/risk-assessments) Tj
+T*
+(- GET /api/resolutions) Tj
+T*
+(- GET /api/notifications) Tj
+T*
+(- GET /api/reports/summary) Tj
+T*
+(- GET /api/users) Tj
+T*
+(- GET /api/audit-logs) Tj
+T*
+() Tj
+T*
+(11. Database collections) Tj
+T*
+() Tj
+T*
+(- Users) Tj
+T*
+(- VendorIssues) Tj
+T*
+(- Investigations) Tj
+T*
+(- RiskAssessments) Tj
+T*
+(- Resolutions) Tj
+T*
+(- Notifications) Tj
+T*
+(- AuditLogs) Tj
+T*
+(- ComplianceCases) Tj
+T*
+() Tj
+T*
+(12. Delivery status) Tj
+T*
+() Tj
+T*
+(The local project is runnable end to end with seeded MongoDB data. Backend and frontend buil) Tj
+T*
+(ds pass. The Compliance Hub covers the requested six domains with shared intake, filtering, ) Tj
+T*
+(case status, severity, confidentiality, anonymous reporting, ownership, and audit events.) Tj
+ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 10 0 R >>
+endobj
+12 0 obj
+<< /Length 403 >>
+stream
+BT
+/F1 10 Tf
+48 748 Td
+14 TL
+() Tj
+T*
+(For a production enterprise release, add SSO/SAML, salted adaptive password hashing, automat) Tj
+T*
+(ed tests, file upload and malware scanning, advanced case-level permissions, vendor master a) Tj
+T*
+(nd due diligence workflows, employee training and attestations, regulatory reporting, backup) Tj
+T*
+(s, monitoring, and deployment infrastructure.) Tj
+T*
+() Tj
+ET
+endstream
+endobj
+13 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 12 0 R >>
+endobj
+xref
+0 14
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000141 00000 n 
+0000000211 00000 n 
+0000002776 00000 n 
+0000002902 00000 n 
+0000004991 00000 n 
+0000005117 00000 n 
+0000006598 00000 n 
+0000006724 00000 n 
+0000008261 00000 n 
+0000008389 00000 n 
+0000008844 00000 n 
+trailer
+<< /Size 14 /Root 1 0 R >>
+startxref
+8972
+%%EOF

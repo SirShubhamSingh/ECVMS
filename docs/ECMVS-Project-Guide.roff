@@ -1,0 +1,136 @@
+." ECMVS Project Guide
+.TH ECMVS 7 "August 2026" "ECMVS" "Project Guide"
+.SH ECMVS PROJECT GUIDE
+.B ECMVS
+is an Enterprise Compliance & Vendor Management System. It records concerns, assigns owners, investigates facts, assesses risk, manages corrective actions, sends notifications, and preserves an audit trail.
+.SH WHAT IS INCLUDED
+.IP \(bu 2
+Compliance Hub for Grievance, Fraud, Health & Safety, Conflict of Interest, Vendor Risk, and Employee compliance.
+.IP \(bu 2
+Vendor issue management with assignment, comments, priority, status, due dates, and search.
+.IP \(bu 2
+Investigations with findings, root cause, evidence, notes, and officer scoping.
+.IP \(bu 2
+Risk assessment using Likelihood multiplied by Impact.
+.IP \(bu 2
+Resolution workflow with corrective action, preventive action, approval, rejection, and closure.
+.IP \(bu 2
+JWT login, role permissions, dashboards, notifications, reports, user administration, and audit logs.
+.IP \(bu 2
+Responsive desktop and mobile interface with the existing ECMVS logo preserved.
+.SH COMPLIANCE DOMAINS
+.TP
+.B Grievance
+Workplace concerns, speak-up reports, confidentiality, and anonymous reporting.
+.TP
+.B Fraud
+Suspected dishonest activity, financial allegations, and forensic investigation intake.
+.TP
+.B Health & Safety
+Incidents, hazards, injuries, near misses, location, and corrective action.
+.TP
+.B Conflict of Interest
+Disclosures, related parties, recusals, and ethical review.
+.TP
+.B Vendor Risk
+Third-party exposure, due diligence, owners, severity, and remediation tracking.
+.TP
+.B Employee
+Employee compliance, conduct, and ethics attestation matters.
+.SH BASIC WORKFLOW
+.IP 1. 3
+Open Compliance Hub and select New case.
+.IP 2. 3
+Choose the domain and severity.
+.IP 3. 3
+Enter the facts, subject, location, confidentiality, and anonymous reporter setting.
+.IP 4. 3
+Create, search, filter, assign, investigate, act, and close the case.
+.PP
+Vendor issues follow: create, assign, investigate, assess risk, create resolution, approve, resolve, close, and review audit history.
+.SH ROLES
+.TP
+.B Super Administrator
+Full administration, users, audit, and all workflows.
+.TP
+.B Compliance Officer
+Investigations, risk assessments, and resolutions.
+.TP
+.B Vendor Manager
+Vendor issues, assignment, and vendor operations.
+.TP
+.B Approver
+Reviews and approves or rejects resolutions.
+.TP
+.B Employee
+Reports concerns and views permitted information.
+.SH TECHNOLOGY
+React 18, TypeScript, Vite, React Router, Axios, and Recharts are used for the frontend. ASP.NET Core 8 and C# provide the API. MongoDB stores data through MongoDB.Driver. JWT provides authentication and Swagger provides API documentation.
+.SH PROJECT FOLDERS
+.IP \(bu 2
+frontend/src/pages: screens.
+.IP \(bu 2
+frontend/src/components: shared UI.
+.IP \(bu 2
+frontend/src/services: API clients.
+.IP \(bu 2
+backend/Controllers: endpoints.
+.IP \(bu 2
+backend/Services: business logic.
+.IP \(bu 2
+backend/Models and DTOs: data contracts.
+.IP \(bu 2
+database/seed.js: demo data and indexes.
+.SH LOCAL STARTUP
+.nf
+Docker MongoDB:
+docker run -d --name ecmvs-mongodb -p 27017:27017 mongo:7
+docker cp database/seed.js ecmvs-mongodb:/tmp/seed.js
+docker exec ecmvs-mongodb mongosh --quiet /tmp/seed.js
+
+Backend:
+cd backend
+dotnet restore
+dotnet run --urls http://localhost:5128
+
+Frontend:
+cd frontend
+npm install
+npm run dev
+.fi
+.PP
+Open http://localhost:5173. API: http://localhost:5128. Swagger: http://localhost:5128/swagger.
+.SH ADMIN LOGIN
+Email: shubham@ecmvs.local
+.br
+Password: Shubham@ECMVS2026!
+.PP
+Other seeded accounts use Password123!: rahul@ecmvs.local, neha@ecmvs.local, priya@ecmvs.local, amit@ecmvs.local, and employee@ecmvs.local.
+.SH IMPORTANT ENDPOINTS
+POST /api/auth/login
+.br
+GET /api/compliance-cases
+.br
+POST /api/compliance-cases
+.br
+GET /api/vendor-issues
+.br
+GET /api/investigations
+.br
+GET /api/risk-assessments
+.br
+GET /api/resolutions
+.br
+GET /api/notifications
+.br
+GET /api/reports/summary
+.br
+GET /api/users
+.br
+GET /api/audit-logs
+.SH DATABASE COLLECTIONS
+Users, VendorIssues, Investigations, RiskAssessments, Resolutions, Notifications, AuditLogs, and ComplianceCases.
+.SH DELIVERY STATUS
+The local project runs end to end with seeded MongoDB data. Backend and frontend builds pass. The Compliance Hub covers all six requested domains with shared intake, filtering, severity, confidentiality, anonymous reporting, ownership, and audit events.
+.PP
+Before production, add SSO/SAML, adaptive password hashing, automated tests, malware-scanned file uploads, advanced case permissions, vendor due diligence, employee training and attestations, regulatory reporting, backups, monitoring, and deployment infrastructure.

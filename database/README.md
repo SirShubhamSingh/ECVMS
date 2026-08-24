@@ -54,7 +54,8 @@ This drops and repopulates the `ECMVS` database with:
 - 20 audit log entries
 - Indexes on the most frequently queried fields
 
-Demo login password for **every** seeded account: `Password123!`
+Super Administrator: `shubham@ecmvs.local` / `Shubham@ECMVS2026!`  
+Other seeded demo accounts: `Password123!`
 
 Re-run the same command any time you want to reset the demo data back to its original state.
 

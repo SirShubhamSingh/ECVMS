@@ -21,4 +21,5 @@ public class MongoDbContext
     public IMongoCollection<Resolution> Resolutions => _database.GetCollection<Resolution>("Resolutions");
     public IMongoCollection<Notification> Notifications => _database.GetCollection<Notification>("Notifications");
     public IMongoCollection<AuditLog> AuditLogs => _database.GetCollection<AuditLog>("AuditLogs");
+    public IMongoCollection<ComplianceCase> ComplianceCases => _database.GetCollection<ComplianceCase>("ComplianceCases");
 }
