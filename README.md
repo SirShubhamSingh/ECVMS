@@ -5,9 +5,6 @@ Compliance Officers, investigate them, assess risk, drive resolutions through an
 workflow, notify the right people, and keep a full audit trail — with strict role-based
 access control enforced on the backend, not just hidden in the UI.
 
-> **Contract Management is intentionally out of scope.** ECMVS does not create, store, or
-> manage contracts of any kind — it manages vendor *issues*: investigation, risk, resolution,
-> notifications, audit, and reporting.
 
 ---
 
