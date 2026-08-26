@@ -26,14 +26,15 @@ public class VendorIssuesController : ControllerBase
         [FromQuery] string? priority, [FromQuery] string? category, [FromQuery] string? officerId,
         [FromQuery] DateTime? from, [FromQuery] DateTime? to)
     {
-        var issues = await _issueService.GetAllAsync(search, status, priority, category, officerId, from, to);
+        var issues = await _issueService.GetAllAsync(_currentUser.UserId, _currentUser.Role,
+            search, status, priority, category, officerId, from, to);
         return Ok(issues);
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        var issue = await _issueService.GetByIdAsync(id);
+        var issue = await _issueService.GetByIdAsync(id, _currentUser.UserId, _currentUser.Role);
         if (issue is null) return NotFound();
         return Ok(issue);
     }
@@ -42,7 +43,7 @@ public class VendorIssuesController : ControllerBase
     [Authorize(Roles = $"{Roles.SuperAdministrator},{Roles.VendorManager},{Roles.Employee},{Roles.ComplianceOfficer}")]
     public async Task<IActionResult> Create(CreateVendorIssueRequest request)
     {
-        var issue = await _issueService.CreateAsync(request, _currentUser.UserId, _currentUser.UserName);
+        var issue = await _issueService.CreateAsync(request, _currentUser.UserId, _currentUser.UserName, _currentUser.Role);
         return CreatedAtAction(nameof(GetById), new { id = issue.Id }, issue);
     }
 
@@ -50,7 +51,7 @@ public class VendorIssuesController : ControllerBase
     [Authorize(Roles = $"{Roles.SuperAdministrator},{Roles.VendorManager},{Roles.ComplianceOfficer}")]
     public async Task<IActionResult> Update(string id, UpdateVendorIssueRequest request)
     {
-        var success = await _issueService.UpdateAsync(id, request, _currentUser.UserId, _currentUser.UserName);
+        var success = await _issueService.UpdateAsync(id, request, _currentUser.UserId, _currentUser.UserName, _currentUser.Role);
         if (!success) return NotFound();
         return Ok(new { message = "Issue updated." });
     }
@@ -59,7 +60,7 @@ public class VendorIssuesController : ControllerBase
     [Authorize(Roles = Roles.SuperAdministrator)]
     public async Task<IActionResult> Delete(string id)
     {
-        var success = await _issueService.DeleteAsync(id, _currentUser.UserId, _currentUser.UserName);
+        var success = await _issueService.DeleteAsync(id, _currentUser.UserId, _currentUser.UserName, _currentUser.Role);
         if (!success) return NotFound();
         return Ok(new { message = "Issue deleted." });
     }
@@ -68,7 +69,7 @@ public class VendorIssuesController : ControllerBase
     [Authorize(Roles = $"{Roles.SuperAdministrator},{Roles.VendorManager}")]
     public async Task<IActionResult> AssignOfficer(string id, AssignOfficerRequest request)
     {
-        var success = await _issueService.AssignOfficerAsync(id, request.OfficerId, _currentUser.UserId, _currentUser.UserName);
+        var success = await _issueService.AssignOfficerAsync(id, request.OfficerId, _currentUser.UserId, _currentUser.UserName, _currentUser.Role);
         if (!success) return NotFound();
         return Ok(new { message = "Officer assigned." });
     }
@@ -77,7 +78,7 @@ public class VendorIssuesController : ControllerBase
     [Authorize(Roles = $"{Roles.SuperAdministrator},{Roles.VendorManager},{Roles.ComplianceOfficer}")]
     public async Task<IActionResult> ChangeStatus(string id, ChangeStatusRequest request)
     {
-        var (success, error) = await _issueService.ChangeStatusAsync(id, request.Status, _currentUser.UserId, _currentUser.UserName);
+        var (success, error) = await _issueService.ChangeStatusAsync(id, request.Status, _currentUser.UserId, _currentUser.UserName, _currentUser.Role);
         if (!success) return BadRequest(new { message = error ?? "Issue not found." });
         return Ok(new { message = "Status updated." });
     }
@@ -85,7 +86,7 @@ public class VendorIssuesController : ControllerBase
     [HttpPost("{id}/comments")]
     public async Task<IActionResult> AddComment(string id, AddCommentRequest request)
     {
-        var success = await _issueService.AddCommentAsync(id, request.Text, _currentUser.UserId, _currentUser.UserName);
+        var success = await _issueService.AddCommentAsync(id, request.Text, _currentUser.UserId, _currentUser.UserName, _currentUser.Role);
         if (!success) return NotFound();
         return Ok(new { message = "Comment added." });
     }

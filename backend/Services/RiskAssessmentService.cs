@@ -10,17 +10,23 @@ public class RiskAssessmentService
     private readonly MongoDbContext _db;
     private readonly NotificationService _notificationService;
     private readonly AuditLogService _auditLogService;
+    private readonly RecordScopeService _scope;
 
-    public RiskAssessmentService(MongoDbContext db, NotificationService notificationService, AuditLogService auditLogService)
+    public RiskAssessmentService(MongoDbContext db, NotificationService notificationService, AuditLogService auditLogService,
+        RecordScopeService scope)
     {
         _db = db;
         _notificationService = notificationService;
         _auditLogService = auditLogService;
+        _scope = scope;
     }
 
-    public async Task<List<RiskAssessment>> GetAllAsync(string? issueId, string? riskLevel)
+    public async Task<List<RiskAssessment>> GetAllAsync(string callerId, string callerRole, string? issueId, string? riskLevel)
     {
         var filter = Builders<RiskAssessment>.Filter.Empty;
+        var accessibleIssueIds = await _scope.GetAccessibleIssueIdsAsync(callerId, callerRole);
+        if (accessibleIssueIds is not null)
+            filter &= Builders<RiskAssessment>.Filter.In(r => r.IssueId, accessibleIssueIds);
         if (!string.IsNullOrWhiteSpace(issueId))
             filter &= Builders<RiskAssessment>.Filter.Eq(r => r.IssueId, issueId);
         if (!string.IsNullOrWhiteSpace(riskLevel))
@@ -29,16 +35,21 @@ public class RiskAssessmentService
         return await _db.RiskAssessments.Find(filter).SortByDescending(r => r.AssessmentDate).ToListAsync();
     }
 
-    public async Task<RiskAssessment?> GetByIdAsync(string id) =>
-        await _db.RiskAssessments.Find(r => r.Id == id).FirstOrDefaultAsync();
+    public async Task<RiskAssessment?> GetByIdAsync(string id, string callerId, string callerRole)
+    {
+        var assessment = await _db.RiskAssessments.Find(r => r.Id == id).FirstOrDefaultAsync();
+        return assessment is not null && await _scope.CanAccessIssueAsync(assessment.IssueId, callerId, callerRole)
+            ? assessment : null;
+    }
 
     public async Task<(RiskAssessment? assessment, string? error)> CreateAsync(CreateRiskAssessmentRequest request,
-        string userId, string userName)
+        string userId, string userName, string callerRole)
     {
         // Business rule: Risk Assessment is only ever applicable to Vendor Issues (Section 15 / RULE 5).
         // Since this collection only ever references VendorIssues, we simply verify the issue exists.
         var issue = await _db.VendorIssues.Find(i => i.Id == request.IssueId).FirstOrDefaultAsync();
         if (issue is null) return (null, "Vendor issue not found. Risk assessment is only available for vendor issues.");
+        if (!await _scope.CanAccessIssueAsync(issue.Id, userId, callerRole)) return (null, "Vendor issue not found or not authorized.");
 
         if (request.Likelihood is < 1 or > 5 || request.Impact is < 1 or > 5)
             return (null, "Likelihood and Impact must each be between 1 and 5.");
@@ -76,8 +87,10 @@ public class RiskAssessmentService
         return (assessment, null);
     }
 
-    public async Task<bool> UpdateAsync(string id, UpdateRiskAssessmentRequest request, string userId, string userName)
+    public async Task<bool> UpdateAsync(string id, UpdateRiskAssessmentRequest request, string userId, string userName, string callerRole)
     {
+        var assessment = await GetByIdAsync(id, userId, callerRole);
+        if (assessment is null) return false;
         var score = request.Likelihood * request.Impact;
         var update = Builders<RiskAssessment>.Update
             .Set(r => r.Likelihood, request.Likelihood)

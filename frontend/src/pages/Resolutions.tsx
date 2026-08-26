@@ -18,6 +18,7 @@ export default function Resolutions() {
   const { showToast } = useToast();
   const [searchParams] = useSearchParams();
   const issueId = searchParams.get("issueId") ?? undefined;
+  const resolutionId = searchParams.get("resolutionId") ?? undefined;
 
   const [resolutions, setResolutions] = useState<Resolution[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,8 +30,14 @@ export default function Resolutions() {
     setLoading(true);
     setError(null);
     try {
-      const data = await resolutionService.list({ status: status || undefined, issueId });
-      setResolutions(data);
+      if (resolutionId) {
+        const data = await resolutionService.get(resolutionId);
+        setResolutions([data]);
+        setSelected(data);
+      } else {
+        const data = await resolutionService.list({ status: status || undefined, issueId });
+        setResolutions(data);
+      }
     } catch (err) {
       setError(extractErrorMessage(err, "Could not load resolutions."));
     } finally {
@@ -41,7 +48,7 @@ export default function Resolutions() {
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status, issueId]);
+  }, [status, issueId, resolutionId]);
 
   const canManage = currentUser?.role === "Super Administrator" || currentUser?.role === "Compliance Officer";
   const canApprove = currentUser?.role === "Super Administrator" || currentUser?.role === "Approver";

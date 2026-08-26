@@ -45,7 +45,7 @@ public class InvestigationsController : ControllerBase
     [Authorize(Roles = $"{Roles.SuperAdministrator},{Roles.ComplianceOfficer}")]
     public async Task<IActionResult> Create(CreateInvestigationRequest request)
     {
-        var investigation = await _investigationService.CreateAsync(request, _currentUser.UserId, _currentUser.UserName);
+        var investigation = await _investigationService.CreateAsync(request, _currentUser.UserId, _currentUser.UserName, _currentUser.Role);
         return CreatedAtAction(nameof(GetById), new { id = investigation.Id }, investigation);
     }
 

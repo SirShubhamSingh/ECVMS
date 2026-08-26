@@ -24,14 +24,14 @@ public class ReportsController : ControllerBase
         Ok(await _reportService.GetDashboardAsync(_currentUser.UserId, _currentUser.Role));
 
     [HttpGet("issues")]
-    public async Task<IActionResult> Issues() => Ok(await _reportService.GetIssueReportAsync());
+    public async Task<IActionResult> Issues() => Ok(await _reportService.GetIssueReportAsync(_currentUser.UserId, _currentUser.Role));
 
     [HttpGet("investigations")]
-    public async Task<IActionResult> Investigations() => Ok(await _reportService.GetInvestigationReportAsync());
+    public async Task<IActionResult> Investigations() => Ok(await _reportService.GetInvestigationReportAsync(_currentUser.UserId, _currentUser.Role));
 
     [HttpGet("risk")]
-    public async Task<IActionResult> Risk() => Ok(await _reportService.GetRiskReportAsync());
+    public async Task<IActionResult> Risk() => Ok(await _reportService.GetRiskReportAsync(_currentUser.UserId, _currentUser.Role));
 
     [HttpGet("resolutions")]
-    public async Task<IActionResult> Resolutions() => Ok(await _reportService.GetResolutionReportAsync());
+    public async Task<IActionResult> Resolutions() => Ok(await _reportService.GetResolutionReportAsync(_currentUser.UserId, _currentUser.Role));
 }

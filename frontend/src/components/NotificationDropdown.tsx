@@ -51,7 +51,9 @@ export default function NotificationDropdown() {
                 onClick={() => {
                   if (!n.read) markRead(n.id);
                   setOpen(false);
-                  navigate("/notifications");
+                  navigate(n.relatedEntity === "Resolution"
+                    ? `/resolutions?resolutionId=${n.relatedEntityId}`
+                    : "/notifications");
                 }}
               >
                 <div className="notif-item-title">{n.title}</div>

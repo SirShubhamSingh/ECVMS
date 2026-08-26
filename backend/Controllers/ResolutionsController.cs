@@ -23,12 +23,12 @@ public class ResolutionsController : ControllerBase
 
     [HttpGet]
     public async Task<IActionResult> GetAll([FromQuery] string? issueId, [FromQuery] string? status) =>
-        Ok(await _resolutionService.GetAllAsync(issueId, status));
+        Ok(await _resolutionService.GetAllAsync(_currentUser.UserId, _currentUser.Role, issueId, status));
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(string id)
     {
-        var resolution = await _resolutionService.GetByIdAsync(id);
+        var resolution = await _resolutionService.GetByIdAsync(id, _currentUser.UserId, _currentUser.Role);
         if (resolution is null) return NotFound();
         return Ok(resolution);
     }
@@ -37,7 +37,7 @@ public class ResolutionsController : ControllerBase
     [Authorize(Roles = $"{Roles.SuperAdministrator},{Roles.ComplianceOfficer}")]
     public async Task<IActionResult> Create(CreateResolutionRequest request)
     {
-        var resolution = await _resolutionService.CreateAsync(request, _currentUser.UserId, _currentUser.UserName);
+        var resolution = await _resolutionService.CreateAsync(request, _currentUser.UserId, _currentUser.UserName, _currentUser.Role);
         return CreatedAtAction(nameof(GetById), new { id = resolution.Id }, resolution);
     }
 
@@ -45,7 +45,7 @@ public class ResolutionsController : ControllerBase
     [Authorize(Roles = $"{Roles.SuperAdministrator},{Roles.ComplianceOfficer}")]
     public async Task<IActionResult> Update(string id, UpdateResolutionRequest request)
     {
-        var success = await _resolutionService.UpdateAsync(id, request, _currentUser.UserId, _currentUser.UserName);
+        var success = await _resolutionService.UpdateAsync(id, request, _currentUser.UserId, _currentUser.UserName, _currentUser.Role);
         if (!success) return NotFound();
         return Ok(new { message = "Resolution updated." });
     }
@@ -54,7 +54,7 @@ public class ResolutionsController : ControllerBase
     [Authorize(Roles = $"{Roles.SuperAdministrator},{Roles.ComplianceOfficer}")]
     public async Task<IActionResult> Submit(string id)
     {
-        var (success, error) = await _resolutionService.SubmitForApprovalAsync(id, _currentUser.UserId, _currentUser.UserName);
+        var (success, error) = await _resolutionService.SubmitForApprovalAsync(id, _currentUser.UserId, _currentUser.UserName, _currentUser.Role);
         if (!success) return NotFound(new { message = error });
         return Ok(new { message = "Resolution submitted." });
     }

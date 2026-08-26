@@ -7,10 +7,12 @@ namespace ECMVS.Backend.Services;
 public class ReportService
 {
     private readonly MongoDbContext _db;
+    private readonly RecordScopeService _scope;
 
-    public ReportService(MongoDbContext db)
+    public ReportService(MongoDbContext db, RecordScopeService scope)
     {
         _db = db;
+        _scope = scope;
     }
 
     public async Task<object> GetDashboardAsync(string callerId, string callerRole)
@@ -125,9 +127,11 @@ public class ReportService
         };
     }
 
-    public async Task<object> GetIssueReportAsync()
+    public async Task<object> GetIssueReportAsync(string callerId, string callerRole)
     {
-        var issues = await _db.VendorIssues.Find(FilterDefinition<VendorIssue>.Empty).ToListAsync();
+        var issueIds = await _scope.GetAccessibleIssueIdsAsync(callerId, callerRole);
+        var filter = issueIds is null ? FilterDefinition<VendorIssue>.Empty : Builders<VendorIssue>.Filter.In(i => i.Id, issueIds);
+        var issues = await _db.VendorIssues.Find(filter).ToListAsync();
         return new
         {
             byStatus = issues.GroupBy(i => i.Status).Select(g => new { status = g.Key, count = g.Count() }),
@@ -140,9 +144,17 @@ public class ReportService
         };
     }
 
-    public async Task<object> GetInvestigationReportAsync()
+    public async Task<object> GetInvestigationReportAsync(string callerId, string callerRole)
     {
-        var investigations = await _db.Investigations.Find(FilterDefinition<Investigation>.Empty).ToListAsync();
+        var filter = FilterDefinition<Investigation>.Empty;
+        if (callerRole == Roles.ComplianceOfficer)
+            filter &= Builders<Investigation>.Filter.Eq(i => i.OfficerId, callerId);
+        else if (callerRole == Roles.Employee)
+        {
+            var issueIds = await _scope.GetAccessibleIssueIdsAsync(callerId, callerRole) ?? new List<string>();
+            filter &= Builders<Investigation>.Filter.In(i => i.IssueId, issueIds);
+        }
+        var investigations = await _db.Investigations.Find(filter).ToListAsync();
         return new
         {
             byStatus = investigations.GroupBy(i => i.Status).Select(g => new { status = g.Key, count = g.Count() }),
@@ -150,9 +162,11 @@ public class ReportService
         };
     }
 
-    public async Task<object> GetRiskReportAsync()
+    public async Task<object> GetRiskReportAsync(string callerId, string callerRole)
     {
-        var risks = await _db.RiskAssessments.Find(FilterDefinition<RiskAssessment>.Empty).ToListAsync();
+        var issueIds = await _scope.GetAccessibleIssueIdsAsync(callerId, callerRole);
+        var filter = issueIds is null ? FilterDefinition<RiskAssessment>.Empty : Builders<RiskAssessment>.Filter.In(r => r.IssueId, issueIds);
+        var risks = await _db.RiskAssessments.Find(filter).ToListAsync();
         return new
         {
             byLevel = risks.GroupBy(r => r.RiskLevel).Select(g => new { level = g.Key, count = g.Count() }),
@@ -160,9 +174,11 @@ public class ReportService
         };
     }
 
-    public async Task<object> GetResolutionReportAsync()
+    public async Task<object> GetResolutionReportAsync(string callerId, string callerRole)
     {
-        var resolutions = await _db.Resolutions.Find(FilterDefinition<Resolution>.Empty).ToListAsync();
+        var issueIds = await _scope.GetAccessibleIssueIdsAsync(callerId, callerRole);
+        var filter = issueIds is null ? FilterDefinition<Resolution>.Empty : Builders<Resolution>.Filter.In(r => r.IssueId, issueIds);
+        var resolutions = await _db.Resolutions.Find(filter).ToListAsync();
         return new
         {
             byStatus = resolutions.GroupBy(r => r.Status).Select(g => new { status = g.Key, count = g.Count() }),

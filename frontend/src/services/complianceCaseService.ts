@@ -20,6 +20,7 @@ export interface ComplianceCase {
   subject?: string;
   location?: string;
   anonymousReporter: boolean;
+  assignedToId?: string;
   assignedToName?: string;
   createdByName: string;
   createdDate: string;
@@ -49,5 +50,8 @@ export const complianceCaseService = {
   async create(payload: CreateComplianceCasePayload) {
     const { data } = await api.post<ComplianceCase>("/compliance-cases", payload);
     return data;
+  },
+  async assign(id: string, officerId: string) {
+    await api.put(`/compliance-cases/${id}/assign`, { officerId });
   }
 };

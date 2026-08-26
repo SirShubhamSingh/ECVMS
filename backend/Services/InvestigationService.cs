@@ -11,12 +11,15 @@ public class InvestigationService
     private readonly MongoDbContext _db;
     private readonly NotificationService _notificationService;
     private readonly AuditLogService _auditLogService;
+    private readonly RecordScopeService _scope;
 
-    public InvestigationService(MongoDbContext db, NotificationService notificationService, AuditLogService auditLogService)
+    public InvestigationService(MongoDbContext db, NotificationService notificationService, AuditLogService auditLogService,
+        RecordScopeService scope)
     {
         _db = db;
         _notificationService = notificationService;
         _auditLogService = auditLogService;
+        _scope = scope;
     }
 
     /// <summary>
@@ -36,9 +39,13 @@ public class InvestigationService
             // Hard server-side restriction — overrides any officerId filter supplied by the client.
             filter &= Builders<Investigation>.Filter.Eq(inv => inv.OfficerId, callerId);
         }
-        else if (!string.IsNullOrWhiteSpace(officerId))
+        else if (callerRole == Roles.SuperAdministrator && !string.IsNullOrWhiteSpace(officerId))
         {
             filter &= Builders<Investigation>.Filter.Eq(inv => inv.OfficerId, officerId);
+        }
+        else if (callerRole != Roles.SuperAdministrator)
+        {
+            return new List<Investigation>();
         }
 
         if (!string.IsNullOrWhiteSpace(status))
@@ -58,17 +65,20 @@ public class InvestigationService
         var investigation = await _db.Investigations.Find(inv => inv.Id == id).FirstOrDefaultAsync();
         if (investigation is null) return null;
 
-        if (callerRole == Roles.ComplianceOfficer && investigation.OfficerId != callerId)
-            return null; // Not authorized to view — treated as not found.
+        if (!await _scope.CanAccessInvestigationAsync(investigation, callerId, callerRole)) return null;
 
         return investigation;
     }
 
-    public async Task<Investigation> CreateAsync(CreateInvestigationRequest request, string userId, string userName)
+    public async Task<Investigation> CreateAsync(CreateInvestigationRequest request, string userId, string userName, string callerRole)
     {
+        if (!await _scope.CanAccessIssueAsync(request.IssueId, userId, callerRole))
+            throw new InvalidOperationException("Vendor issue not found or not authorized.");
+
         var issue = await _db.VendorIssues.Find(i => i.Id == request.IssueId).FirstOrDefaultAsync()
             ?? throw new InvalidOperationException("Vendor issue not found.");
-        var officer = await _db.Users.Find(u => u.Id == request.OfficerId).FirstOrDefaultAsync()
+        var officerId = callerRole == Roles.ComplianceOfficer ? userId : request.OfficerId;
+        var officer = await _db.Users.Find(u => u.Id == officerId).FirstOrDefaultAsync()
             ?? throw new InvalidOperationException("Officer not found.");
 
         var investigation = new Investigation

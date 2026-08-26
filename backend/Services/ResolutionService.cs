@@ -10,17 +10,28 @@ public class ResolutionService
     private readonly MongoDbContext _db;
     private readonly NotificationService _notificationService;
     private readonly AuditLogService _auditLogService;
+    private readonly RecordScopeService _scope;
 
-    public ResolutionService(MongoDbContext db, NotificationService notificationService, AuditLogService auditLogService)
+    public ResolutionService(MongoDbContext db, NotificationService notificationService, AuditLogService auditLogService,
+        RecordScopeService scope)
     {
         _db = db;
         _notificationService = notificationService;
         _auditLogService = auditLogService;
+        _scope = scope;
     }
 
-    public async Task<List<Resolution>> GetAllAsync(string? issueId, string? status)
+    public async Task<List<Resolution>> GetAllAsync(string callerId, string callerRole, string? issueId, string? status)
     {
         var filter = Builders<Resolution>.Filter.Empty;
+        if (callerRole == Roles.Approver)
+            filter &= Builders<Resolution>.Filter.Eq(r => r.Status, ResolutionStatus.PendingApproval);
+        else
+        {
+            var accessibleIssueIds = await _scope.GetAccessibleIssueIdsAsync(callerId, callerRole);
+            if (accessibleIssueIds is not null)
+                filter &= Builders<Resolution>.Filter.In(r => r.IssueId, accessibleIssueIds);
+        }
         if (!string.IsNullOrWhiteSpace(issueId))
             filter &= Builders<Resolution>.Filter.Eq(r => r.IssueId, issueId);
         if (!string.IsNullOrWhiteSpace(status))
@@ -29,13 +40,22 @@ public class ResolutionService
         return await _db.Resolutions.Find(filter).SortByDescending(r => r.ResolutionDate).ToListAsync();
     }
 
-    public async Task<Resolution?> GetByIdAsync(string id) =>
-        await _db.Resolutions.Find(r => r.Id == id).FirstOrDefaultAsync();
+    public async Task<Resolution?> GetByIdAsync(string id, string callerId, string callerRole)
+    {
+        var resolution = await _db.Resolutions.Find(r => r.Id == id).FirstOrDefaultAsync();
+        var canAccess = callerRole == Roles.Approver
+            ? resolution?.Status == ResolutionStatus.PendingApproval
+            : resolution is not null && await _scope.CanAccessIssueAsync(resolution.IssueId, callerId, callerRole);
+        return resolution is not null && canAccess
+            ? resolution : null;
+    }
 
-    public async Task<Resolution> CreateAsync(CreateResolutionRequest request, string userId, string userName)
+    public async Task<Resolution> CreateAsync(CreateResolutionRequest request, string userId, string userName, string callerRole)
     {
         var issue = await _db.VendorIssues.Find(i => i.Id == request.IssueId).FirstOrDefaultAsync()
             ?? throw new InvalidOperationException("Vendor issue not found.");
+        if (!await _scope.CanAccessIssueAsync(issue.Id, userId, callerRole))
+            throw new InvalidOperationException("Vendor issue not found or not authorized.");
 
         var resolution = new Resolution
         {
@@ -64,8 +84,9 @@ public class ResolutionService
         return resolution;
     }
 
-    public async Task<bool> UpdateAsync(string id, UpdateResolutionRequest request, string userId, string userName)
+    public async Task<bool> UpdateAsync(string id, UpdateResolutionRequest request, string userId, string userName, string callerRole)
     {
+        if (await GetByIdAsync(id, userId, callerRole) is null) return false;
         var update = Builders<Resolution>.Update
             .Set(r => r.RootCause, request.RootCause)
             .Set(r => r.CorrectiveAction, request.CorrectiveAction)
@@ -79,9 +100,9 @@ public class ResolutionService
         return result.ModifiedCount > 0;
     }
 
-    public async Task<(bool success, string? error)> SubmitForApprovalAsync(string id, string userId, string userName)
+    public async Task<(bool success, string? error)> SubmitForApprovalAsync(string id, string userId, string userName, string callerRole)
     {
-        var resolution = await GetByIdAsync(id);
+        var resolution = await GetByIdAsync(id, userId, callerRole);
         if (resolution is null) return (false, "Resolution not found.");
 
         var nextStatus = resolution.RequiresApproval ? ResolutionStatus.PendingApproval : ResolutionStatus.Resolved;
@@ -112,7 +133,7 @@ public class ResolutionService
     public async Task<(bool success, string? error)> DecideApprovalAsync(string id, ApprovalDecisionRequest request,
         string userId, string userName)
     {
-        var resolution = await GetByIdAsync(id);
+        var resolution = await GetByIdAsync(id, userId, Roles.Approver);
         if (resolution is null) return (false, "Resolution not found.");
         if (resolution.Status != ResolutionStatus.PendingApproval) return (false, "Resolution is not pending approval.");
 

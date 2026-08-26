@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { Modal } from "../components/Modal";
 import { useToast } from "../components/Toast";
 import { extractErrorMessage } from "../services/api";
+import { userService } from "../services/userService";
+import { useAuth } from "../hooks/useAuth";
+import type { AppUser } from "../types";
 import { CASE_SEVERITIES, CASE_STATUSES, CASE_TYPES, complianceCaseService, type CaseSeverity, type CaseType, type ComplianceCase } from "../services/complianceCaseService";
 
 const TYPE_META: Record<CaseType, { description: string; tone: string }> = {
@@ -14,8 +17,10 @@ const TYPE_META: Record<CaseType, { description: string; tone: string }> = {
 };
 
 export default function ComplianceHub() {
+  const { currentUser } = useAuth();
   const { showToast } = useToast();
   const [cases, setCases] = useState<ComplianceCase[]>([]);
+  const [officers, setOfficers] = useState<AppUser[]>([]);
   const [type, setType] = useState("");
   const [status, setStatus] = useState("");
   const [search, setSearch] = useState("");
@@ -30,13 +35,26 @@ export default function ComplianceHub() {
     finally { setLoading(false); }
   }
   useEffect(() => { const timer = setTimeout(load, 180); return () => clearTimeout(timer); }, [type, status, search]);
+  useEffect(() => {
+    if (currentUser?.role === "Super Administrator") userService.officers().then(setOfficers).catch(() => setOfficers([]));
+  }, [currentUser?.role]);
+
+  async function assign(item: ComplianceCase, officerId: string) {
+    try {
+      await complianceCaseService.assign(item.id, officerId);
+      showToast("Officer assigned.", "success");
+      load();
+    } catch (err) {
+      showToast(extractErrorMessage(err, "Could not assign officer."), "error");
+    }
+  }
 
   const counts = CASE_TYPES.map((item) => ({ type: item, count: cases.filter((itemCase) => itemCase.caseType === item).length }));
 
   return <div className="page compliance-hub">
     <div className="page-header">
       <div><div className="eyebrow">Enterprise compliance operations</div><h1>Compliance Hub</h1><p className="page-subtitle">One controlled workspace for speak-up, integrity, safety, third-party and employee risk.</p></div>
-      <button className="btn btn-primary" onClick={() => setShowCreate(true)}>+ New case</button>
+      {(currentUser?.role === "Employee" || currentUser?.role === "Super Administrator") && <button className="btn btn-primary" onClick={() => setShowCreate(true)}>+ New case</button>}
     </div>
 
     <section className="hub-hero">
@@ -49,7 +67,7 @@ export default function ComplianceHub() {
     <div className="section-header hub-list-header"><div><h2>Case register</h2><p className="muted">Search and triage all authorized compliance matters.</p></div><div className="hub-filters"><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search case, subject or title" /><select value={status} onChange={(e) => setStatus(e.target.value)}><option value="">All statuses</option>{CASE_STATUSES.map((item) => <option key={item}>{item}</option>)}</select></div></div>
     {loading && <div className="state-panel">Loading case register...</div>}
     {!loading && error && <div className="state-panel state-panel-error"><h4>{error}</h4><button className="btn btn-secondary" onClick={load}>Retry</button></div>}
-    {!loading && !error && <div className="card case-register"><table className="data-table"><thead><tr><th>Case</th><th>Domain</th><th>Status</th><th>Severity</th><th>Owner</th><th>Created</th></tr></thead><tbody>{cases.map((item) => <tr key={item.id}><td><strong>{item.caseNumber}</strong><div className="table-secondary">{item.title}</div></td><td><span className={`domain-pill pill-${TYPE_META[item.caseType].tone}`}>{item.caseType}</span></td><td><span className={`status-dot status-${item.status.toLowerCase().replace(/ /g, "-")}`}>{item.status}</span></td><td><span className={`severity severity-${item.severity.toLowerCase()}`}>{item.severity}</span></td><td>{item.assignedToName ?? "Unassigned"}</td><td>{new Date(item.createdDate).toLocaleDateString()}</td></tr>)}</tbody></table>{cases.length === 0 && <div className="empty-inline">No cases match the current filters.</div>}</div>}
+    {!loading && !error && <div className="card case-register"><table className="data-table"><thead><tr><th>Case</th><th>Domain</th><th>Status</th><th>Severity</th><th>Owner</th><th>Created</th></tr></thead><tbody>{cases.map((item) => <tr key={item.id}><td><strong>{item.caseNumber}</strong><div className="table-secondary">{item.title}</div></td><td><span className={`domain-pill pill-${TYPE_META[item.caseType].tone}`}>{item.caseType}</span></td><td><span className={`status-dot status-${item.status.toLowerCase().replace(/ /g, "-")}`}>{item.status}</span></td><td><span className={`severity severity-${item.severity.toLowerCase()}`}>{item.severity}</span></td><td>{currentUser?.role === "Super Administrator" ? <select value={item.assignedToId ?? ""} onChange={(e) => assign(item, e.target.value)}><option value="">Unassigned</option>{officers.map((officer) => <option key={officer.id} value={officer.id}>{officer.name}</option>)}</select> : item.assignedToName ?? "Unassigned"}</td><td>{new Date(item.createdDate).toLocaleDateString()}</td></tr>)}</tbody></table>{cases.length === 0 && <div className="empty-inline">No cases match the current filters.</div>}</div>}
     {showCreate && <CreateCaseModal onClose={() => setShowCreate(false)} onSaved={() => { setShowCreate(false); showToast("Compliance case created.", "success"); load(); }} />}
   </div>;
 }

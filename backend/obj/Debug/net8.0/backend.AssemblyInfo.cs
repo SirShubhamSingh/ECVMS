@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ECMVS.Backend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d0e581b4efd64b98dd01d394cb736f91c7856091")]
 [assembly: System.Reflection.AssemblyProductAttribute("ECMVS.Backend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ECMVS.Backend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

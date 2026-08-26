@@ -10,7 +10,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", path: "/", icon: "📊" },
-  { label: "Compliance Hub", path: "/compliance", icon: "◈" },
+  { label: "Compliance Hub", path: "/compliance", icon: "◈", roles: ["Super Administrator", "Compliance Officer", "Employee"] },
   { label: "Vendor Issues", path: "/vendor-issues", icon: "🗂️" },
   {
     label: "Investigations",
@@ -31,7 +31,7 @@ const NAV_ITEMS: NavItem[] = [
     roles: ["Super Administrator", "Compliance Officer", "Approver"]
   },
   { label: "Notifications", path: "/notifications", icon: "🔔" },
-  { label: "Reports", path: "/reports", icon: "📈" },
+  { label: "Reports", path: "/reports", icon: "📈", roles: ["Super Administrator", "Compliance Officer"] },
   { label: "Users", path: "/users", icon: "👤", roles: ["Super Administrator"] },
   { label: "Audit Log", path: "/audit-log", icon: "🧾", roles: ["Super Administrator"] },
   { label: "Settings", path: "/settings", icon: "⚙️" }

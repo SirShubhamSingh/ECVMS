@@ -31,6 +31,7 @@ builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<AuditLogService>();
 builder.Services.AddScoped<ReportService>();
 builder.Services.AddScoped<ComplianceCaseService>();
+builder.Services.AddScoped<RecordScopeService>();
 
 // ---------- Controllers ----------
 builder.Services.AddControllers().AddJsonOptions(options =>

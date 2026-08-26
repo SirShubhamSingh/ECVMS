@@ -1,10 +1,12 @@
 import { useNotifications } from "../hooks/useNotifications";
 import { LoadingSpinner, EmptyState } from "../components/StatePanels";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Notifications() {
   const { notifications, unreadCount, markRead, markAllRead } = useNotifications(15000);
   const [busy, setBusy] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="page">
@@ -38,7 +40,10 @@ export default function Notifications() {
             <div
               key={n.id}
               className={`notif-page-item ${n.read ? "" : "unread"}`}
-              onClick={() => !n.read && markRead(n.id)}
+              onClick={() => {
+                if (!n.read) markRead(n.id);
+                if (n.relatedEntity === "Resolution") navigate(`/resolutions?resolutionId=${n.relatedEntityId}`);
+              }}
               style={{ cursor: n.read ? "default" : "pointer" }}
             >
               <div>

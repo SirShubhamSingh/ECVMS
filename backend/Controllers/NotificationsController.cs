@@ -24,8 +24,8 @@ public class NotificationsController : ControllerBase
     [HttpGet("me")]
     public async Task<IActionResult> GetMine()
     {
-        var notifications = await _notificationService.GetMyNotificationsAsync(_currentUser.UserId);
-        var unreadCount = await _notificationService.GetUnreadCountAsync(_currentUser.UserId);
+        var notifications = await _notificationService.GetMyNotificationsAsync(_currentUser.UserId, _currentUser.Role);
+        var unreadCount = await _notificationService.GetUnreadCountAsync(_currentUser.UserId, _currentUser.Role);
         return Ok(new { notifications, unreadCount });
     }
 

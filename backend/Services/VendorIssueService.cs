@@ -12,18 +12,24 @@ public class VendorIssueService
     private readonly MongoDbContext _db;
     private readonly NotificationService _notificationService;
     private readonly AuditLogService _auditLogService;
+    private readonly RecordScopeService _scope;
 
-    public VendorIssueService(MongoDbContext db, NotificationService notificationService, AuditLogService auditLogService)
+    public VendorIssueService(MongoDbContext db, NotificationService notificationService, AuditLogService auditLogService,
+        RecordScopeService scope)
     {
         _db = db;
         _notificationService = notificationService;
         _auditLogService = auditLogService;
+        _scope = scope;
     }
 
-    public async Task<List<VendorIssue>> GetAllAsync(string? search, string? status, string? priority,
+    public async Task<List<VendorIssue>> GetAllAsync(string callerId, string callerRole, string? search, string? status, string? priority,
         string? category, string? officerId, DateTime? from, DateTime? to)
     {
         var filter = Builders<VendorIssue>.Filter.Empty;
+        var accessibleIds = await _scope.GetAccessibleIssueIdsAsync(callerId, callerRole);
+        if (accessibleIds is not null)
+            filter &= Builders<VendorIssue>.Filter.In(i => i.Id, accessibleIds);
 
         if (!string.IsNullOrWhiteSpace(status))
             filter &= Builders<VendorIssue>.Filter.Eq(i => i.Status, status);
@@ -47,8 +53,11 @@ public class VendorIssueService
         return await _db.VendorIssues.Find(filter).SortByDescending(i => i.CreatedDate).ToListAsync();
     }
 
-    public async Task<VendorIssue?> GetByIdAsync(string id) =>
-        await _db.VendorIssues.Find(i => i.Id == id).FirstOrDefaultAsync();
+    public async Task<VendorIssue?> GetByIdAsync(string id, string callerId, string callerRole)
+    {
+        if (!await _scope.CanAccessIssueAsync(id, callerId, callerRole)) return null;
+        return await _db.VendorIssues.Find(i => i.Id == id).FirstOrDefaultAsync();
+    }
 
     // private async Task<string> NextIssueNumberAsync()
     // {
@@ -85,10 +94,10 @@ private async Task<string> NextIssueNumberAsync()
 
     return IssueNumberGenerator.Generate(nextNumber, year);
 }
-    public async Task<VendorIssue> CreateAsync(CreateVendorIssueRequest request, string createdById, string createdByName)
+    public async Task<VendorIssue> CreateAsync(CreateVendorIssueRequest request, string createdById, string createdByName, string callerRole)
     {
         User? officer = null;
-        if (!string.IsNullOrWhiteSpace(request.AssignedOfficerId))
+        if (callerRole != Roles.Employee && !string.IsNullOrWhiteSpace(request.AssignedOfficerId))
             officer = await _db.Users.Find(u => u.Id == request.AssignedOfficerId).FirstOrDefaultAsync();
 
         var issue = new VendorIssue
@@ -123,8 +132,9 @@ private async Task<string> NextIssueNumberAsync()
         return issue;
     }
 
-    public async Task<bool> UpdateAsync(string id, UpdateVendorIssueRequest request, string userId, string userName)
+    public async Task<bool> UpdateAsync(string id, UpdateVendorIssueRequest request, string userId, string userName, string callerRole)
     {
+        if (!await _scope.CanAccessIssueAsync(id, userId, callerRole)) return false;
         var update = Builders<VendorIssue>.Update
             .Set(i => i.Title, request.Title)
             .Set(i => i.Vendor, request.Vendor)
@@ -139,20 +149,21 @@ private async Task<string> NextIssueNumberAsync()
         return result.ModifiedCount > 0;
     }
 
-    public async Task<bool> DeleteAsync(string id, string userId, string userName)
+    public async Task<bool> DeleteAsync(string id, string userId, string userName, string callerRole)
     {
+        if (!await _scope.CanAccessIssueAsync(id, userId, callerRole)) return false;
         var result = await _db.VendorIssues.DeleteOneAsync(i => i.Id == id);
         if (result.DeletedCount > 0)
             await _auditLogService.LogAsync(userId, userName, "Issue deleted", "VendorIssue", id, "Issue removed");
         return result.DeletedCount > 0;
     }
 
-    public async Task<bool> AssignOfficerAsync(string id, string officerId, string userId, string userName)
+    public async Task<bool> AssignOfficerAsync(string id, string officerId, string userId, string userName, string callerRole)
     {
         var officer = await _db.Users.Find(u => u.Id == officerId).FirstOrDefaultAsync();
         if (officer is null) return false;
 
-        var issue = await GetByIdAsync(id);
+        var issue = await GetByIdAsync(id, userId, callerRole);
         if (issue is null) return false;
 
         var newStatus = issue.Status == IssueStatus.PendingAssignment ? IssueStatus.Open : issue.Status;
@@ -173,9 +184,9 @@ private async Task<string> NextIssueNumberAsync()
         return result.ModifiedCount > 0;
     }
 
-    public async Task<(bool success, string? error)> ChangeStatusAsync(string id, string newStatus, string userId, string userName)
+    public async Task<(bool success, string? error)> ChangeStatusAsync(string id, string newStatus, string userId, string userName, string callerRole)
     {
-        var issue = await GetByIdAsync(id);
+        var issue = await GetByIdAsync(id, userId, callerRole);
         if (issue is null) return (false, "Issue not found.");
 
         if (issue.Status == newStatus) return (true, null);
@@ -193,8 +204,9 @@ private async Task<string> NextIssueNumberAsync()
         return (result.ModifiedCount > 0, null);
     }
 
-    public async Task<bool> AddCommentAsync(string id, string text, string userId, string userName)
+    public async Task<bool> AddCommentAsync(string id, string text, string userId, string userName, string callerRole)
     {
+        if (!await _scope.CanAccessIssueAsync(id, userId, callerRole)) return false;
         var comment = new IssueComment { UserId = userId, UserName = userName, Text = text, CreatedDate = DateTime.UtcNow };
         var result = await _db.VendorIssues.UpdateOneAsync(i => i.Id == id,
             Builders<VendorIssue>.Update.Push(i => i.Comments, comment));
