@@ -8,7 +8,7 @@ access control enforced on the backend, not just hidden in the UI.
 
 ---
 
-## 1. Technology Stack
+## 1. Technology Stack -- 
 
 | Layer | Technology |
 |---|---|
